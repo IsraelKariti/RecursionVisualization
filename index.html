@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+      <main>
+        <aside>
+          <button id="play-button">&#x25b6;</button>
+          <div class="draggables">
+            <div id="stop-condition" class="command stop-condition" draggable="true">if(x==0)return</div>
+            <div id="print-command" class="command print-command" draggable="true">print(x)</div>
+            <div id="func-command" class="command func-command" draggable="true">func(x-1)</div>
+          </div>
+          </aside>
+
+        <div id="view-area">
+          <div class="function-container">
+            <div class="function-signature">
+              <span>func(x=</span>
+              <input type="number" inputmode="numeric" min="0" max="5" value="1"></input>
+              <span>)</span>
+            </div>
+            <div class="commands-container" id="commands-container"></div>
+          </div>
+        </div>
+      </main>
+      
+      <footer id="footer">
+        
+      </footer>
+    <script src="script.js"></script>
+</body>
+</html>
