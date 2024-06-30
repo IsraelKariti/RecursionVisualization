@@ -29,6 +29,7 @@ function clearCommandHighlights(){
 
 async function executeFunc(){
     return new Promise(async resolve=>{
+        await sleep(2000);
         const newFunctionContainer = this.cloneNode(true);
         newFunctionContainer.x = this.x - 1;
         setRecursionSignature.call(newFunctionContainer);
@@ -102,21 +103,27 @@ async function executeFunctionContainer(){
     }
 }
 
-function setParameterVal(){
-    const functionSignature = this.getElementsByClassName("function-signature")[0];
-    const inputElement = functionSignature.getElementsByTagName("input")[0];
-    this.x = inputElement.value;
+async function setParameterVal(){
+    return new Promise((resolve)=>{
+        const functionSignature = this.getElementsByClassName("function-signature")[0];
+        const inputElement = functionSignature.getElementsByTagName("input")[0];
+        this.x = inputElement.value;
+    });
 };
 
-function setRecursionSignature(){
-    const functionSignature = this.getElementsByClassName("function-signature")[0];
-    functionSignature.replaceChildren("func("+this.x+")");
+async function setRecursionSignature(){
+    return new Promise((resolve)=>{
+        const functionSignature = this.getElementsByClassName("function-signature")[0];
+        functionSignature.replaceChildren("func("+this.x+")");
+        resolve();
+    });
 };
 
-const onClick = (event)=>{
+const onClick = async (event)=>{
     setParameterVal.call(functionContainerElement);
-    setRecursionSignature.call(functionContainerElement);
-    executeFunctionContainer.call(functionContainerElement);
+    await setRecursionSignature.call(functionContainerElement);
+    await sleep(2000);
+    await executeFunctionContainer.call(functionContainerElement);
 };
 
 playButton.addEventListener("click", onClick);
