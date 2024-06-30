@@ -14,9 +14,11 @@ function sleep(ms) {
 async function executePrint(){
     const line = document.createElement("p");
     line.style.margin = "1rem";
-    line.style.fontSize = "2rem";
+    line.style.fontSize = "5rem";
+    line.style.fontWeight = "700";
     line.innerText = this.x;
     terminal.appendChild(line);
+    line.scrollIntoView();
 };
 
 function clearCommandHighlights(){
