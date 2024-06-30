@@ -56,11 +56,19 @@ const executionTable = {
 
 const onDragStart = (event)=>{
     event.dataTransfer.setData("text",event.target.id);
+
+    // set red background to function container
+    if(functionCommands.children.length === 0)
+        functionCommands.classList.add('dropit');
 };
 
 const onDragOver = (event)=>{
     event.preventDefault();
 };
+
+const onDragEnd = (event)=>{
+    functionCommands.classList.remove('dropit');
+}
 
 const onDrop = (event)=>{
     event.preventDefault();
@@ -75,8 +83,12 @@ const onDrop = (event)=>{
 };
 
 stopCondition.addEventListener("dragstart", onDragStart);
+stopCondition.addEventListener("dragend", onDragEnd);
+
 printCommand.addEventListener("dragstart",onDragStart);
+printCommand.addEventListener("dragend",onDragEnd);
 funcCommand.addEventListener("dragstart",onDragStart);
+funcCommand.addEventListener("dragend",onDragEnd);
 
 functionCommands.addEventListener("dragover", onDragOver);
 functionCommands.addEventListener("drop", onDrop);

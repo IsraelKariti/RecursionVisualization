@@ -46,6 +46,14 @@ aside {
   border-radius: 10px;
   
 }
+.dropit{
+  background-image: url("./dropit.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  animation: fadeInOut 2s ease-in-out infinite alternate;
+
+}
 .draggable
 {
   cursor: grab;
