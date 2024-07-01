@@ -1,3 +1,4 @@
+//git add . && git commit -m "initial commit" && git push
 const stopCondition = document.getElementById("stop-condition");
 const printCommand = document.getElementById("print-command");
 const funcCommand = document.getElementById("func-command");
