@@ -150,8 +150,13 @@ async function setRecursionSignature(){
     });
 };
 
+function disableDragability(){
+    [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.classList.remove("draggable"));
+}
+
 const onClick = async (event)=>{
     setParameterVal.call(functionContainerElement);
+    disableDragability();
     await setRecursionSignature.call(functionContainerElement);
     await sleep(2000);
     await executeFunctionContainer.call(functionContainerElement);
