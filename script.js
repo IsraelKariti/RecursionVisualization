@@ -43,6 +43,22 @@ async function executeFunc(){
     });
 };
 
+async function greyFunctionContainer(time=2000){
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            console.log("NEED TO ITERATE OVER ALL HIERARCHY AND changing attributes ");
+            this.getElementsByClassName("function-signature")[0].classList.add("function-disabled");
+            this.getElementsByClassName("commands-container")[0].classList.add("function-disabled");
+            [].forEach.call(this.getElementsByClassName("command"),ele=>
+                {
+                    ele.classList.add("function-disabled");
+                    ele.classList.remove("command-highlight");
+                });
+            resolve();
+        },time);
+    });
+}
+
 async function executeStopCondition(){
     if(this.x === 0)
         this.functionRunning = false;
@@ -115,6 +131,7 @@ async function executeFunctionContainer(){
         await sleep(2000);
         command.classList.remove("command-highlight");
     }
+    await greyFunctionContainer.call(this,0);
 }
 
 async function setParameterVal(){
