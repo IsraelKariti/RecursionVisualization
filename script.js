@@ -15,11 +15,14 @@ function sleep(ms) {
 async function executePrint(){
     const line = document.createElement("p");
     line.style.margin = "1rem";
-    line.style.fontSize = "5rem";
     line.style.fontWeight = "700";
     line.innerText = this.x;
+    line.style.scrollMargin = "50px";
+    line.style.fontSize = "20px";
+    line.classList.add("terminal-text-appearance");
     terminal.appendChild(line);
-    line.scrollIntoView();
+    //terminal.scrollTop = terminal.scrollHeight;
+    line.scrollIntoView({block:"end"});
 };
 
 function clearCommandHighlights(){
@@ -92,7 +95,7 @@ const onDrop = (event)=>{
     const id = event.dataTransfer.getData("text");
     const origNode = document.getElementById(id);
     const newNode = origNode.cloneNode(true);
-    newNode.removeAttribute("draggable");
+    newNode.setAttribute("draggable", false);
     newNode.removeAttribute("id");
     newNode.removeEventListener("drop", onDrop);
     newNode.classList.remove("draggable");
@@ -152,7 +155,7 @@ async function setRecursionSignature(){
 };
 
 function disableDragability(){
-    [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.classList.remove("draggable"));
+    [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
 
 const onClick = async (event)=>{
