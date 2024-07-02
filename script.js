@@ -32,13 +32,19 @@ function clearCommandHighlights(){
     }
 };
 
+function setFunctionHighlight(){
+    const functionSignature = this.getElementsByClassName("function-signature")[0];
+    functionSignature.classList.add("function-container-highlight");
+}
+
 async function executeFunc(){
     return new Promise(async resolve=>{
-        await sleep(2000);
+        //await sleep(2000);
         const newFunctionContainer = this.cloneNode(true);
         newFunctionContainer.x = this.x - 1;
         setRecursionSignature.call(newFunctionContainer);
         clearCommandHighlights.call(newFunctionContainer);
+        setFunctionHighlight.call(newFunctionContainer);
         viewArea.appendChild(newFunctionContainer);
         await sleep(2000);
         await executeFunctionContainer.call(newFunctionContainer);

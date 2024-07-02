@@ -80,6 +80,11 @@ aside {
   align-items: center;
   border-radius: 10px;
 }
+
+.function-container-highlight{
+  animation: frame-highlight-animation 1s;
+}
+
 .function-signature{
   font-weight: 700;
   font-size:2rem;
@@ -90,6 +95,7 @@ aside {
   color: blue;
   border: 4px solid blue;
   background-color: white;
+  z-index: 1;
 }
 
 input{
@@ -102,8 +108,7 @@ input{
   text-align: center;
 }
 .command-highlight{
-  
-  animation: command-highlight-animation 1s;
+  animation: frame-highlight-animation 1s;
 }
 .commands-container{
   height: 200px;
@@ -177,7 +182,7 @@ footer{
 }
 
 
-@keyframes command-highlight-animation {
+@keyframes frame-highlight-animation {
   100%{
     outline: 3px solid red;
   }
