@@ -3,7 +3,7 @@ const stopCondition = document.getElementById("stop-condition");
 const printCommand = document.getElementById("print-command");
 const funcCommand = document.getElementById("func-command");
 const functionCommands = document.getElementById("commands-container");
-const playButton = document.getElementById("play-button");
+const playButton = document.getElementsByClassName("play-button")[0];
 const functionContainerElement = document.getElementsByClassName("function-container")[0];
 const viewArea = document.getElementById("view-area");
 const terminal = document.getElementById("footer");
@@ -109,6 +109,8 @@ const onDrop = (event)=>{
     newNode.removeEventListener("drop", onDrop);
     newNode.classList.remove("draggable");
     event.currentTarget.appendChild(newNode);
+
+    playButton.classList.remove("button-disabled");
 };
 
 stopCondition.addEventListener("dragstart", onDragStart);
