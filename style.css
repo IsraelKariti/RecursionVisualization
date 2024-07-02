@@ -102,7 +102,8 @@ input{
   text-align: center;
 }
 .command-highlight{
-  outline:3px solid red;
+  
+  animation: command-highlight-animation 1s;
 }
 .commands-container{
   height: 200px;
@@ -132,41 +133,78 @@ footer{
 }
 
 .terminal-text-appearance{
-  animation: pop-text 1s forwards;
+  animation: pop-text 1s;
 }
 
 @keyframes pop-text {
   100%{
-    font-size: 20px;
+    transform: translate(0px) scale(1,1);
     color: black;
   }
 
   88%{
-    font-size: 50px;
+    color: red;
+    transform: translate(100%) scale(3,3);
   }
 
   75%{
-    font-size: 30px;
+    transform: translate(50%)  scale(2,2);
+    color: black;
   }
 
   62%{
-    font-size: 50px;
+    color: red;
+    transform: translate(100%) scale(3,3);
   }
   50%{
-    color: red;
-    
-    font-size: 30px;
+    transform: translate(50%)  scale(2,2);
+    color: black;
   }
 
   32%{
-    font-size: 50px;
+    transform: translate(100%) scale(3,3);
+    color: red;
   }
   25%{
-    font-size: 30px;
+    transform: translate(50%)  scale(2,2);
+    color: black;
   }
   
   0%{
-    font-size: 20px;
+    transform: translate(0px) scale(1,1);
     color: black;
+  }
+}
+
+
+@keyframes command-highlight-animation {
+  100%{
+    outline: 3px solid red;
+  }
+
+  88%{
+    outline: 9px solid red;
+  }
+
+  75%{
+    outline: 6px solid red;
+  }
+
+  62%{
+    outline: 9px solid red;
+  }
+  50%{
+    outline: 6px solid red;
+  }
+
+  32%{
+    outline: 9px solid red;
+  }
+  25%{
+    outline: 6px solid red;
+  }
+  
+  0%{
+    outline: 3px solid red;
   }
 }

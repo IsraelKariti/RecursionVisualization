@@ -14,14 +14,13 @@ function sleep(ms) {
 
 async function executePrint(){
     const line = document.createElement("p");
-    line.style.margin = "1rem";
     line.style.fontWeight = "700";
     line.innerText = this.x;
     line.style.scrollMargin = "50px";
+    line.style.width = "20px";
     line.style.fontSize = "20px";
     line.classList.add("terminal-text-appearance");
     terminal.appendChild(line);
-    //terminal.scrollTop = terminal.scrollHeight;
     line.scrollIntoView({block:"end"});
 };
 
