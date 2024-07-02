@@ -93,7 +93,9 @@ function addDropit()
 
 function removeDropit()
 {
-    functionCommands.removeChild(functionCommands.getElementsByTagName("img")[0]);
+    const dropit = functionCommands.getElementsByTagName("img")[0];
+    if(dropit != null)
+        functionCommands.removeChild(dropit);
 }
 
 const onDragStart = (event)=>{
