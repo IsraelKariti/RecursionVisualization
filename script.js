@@ -1,4 +1,6 @@
-//git add . && git commit -m "initial commit" && git push
+/*
+git add . && git commit -m "initial commit" && git push
+*/
 const stopCondition = document.getElementById("stop-condition");
 const printCommand = document.getElementById("print-command");
 const funcCommand = document.getElementById("func-command");
@@ -7,7 +9,7 @@ const playButton = document.getElementsByClassName("play-button")[0];
 const functionContainerElement = document.getElementsByClassName("function-container")[0];
 const viewArea = document.getElementById("view-area");
 const terminal = document.getElementById("footer");
-
+let COMMANDS_INTERVAL = 2000;
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -79,25 +81,33 @@ const executionTable = {
     "stop-condition": executeStopCondition,
 };
 
-const onDragStart = (event)=>{
-    event.dataTransfer.setData("text",event.target.id);
-
-    // set red background to function container
+function addDropit()
+{
     if(functionCommands.children.length === 0)
         {
             const img = document.createElement("img");
             img.classList.add('dropit');
             functionCommands.appendChild(img);
         }
+}
+
+function removeDropit()
+{
+    functionCommands.removeChild(functionCommands.getElementsByTagName("img")[0]);
+}
+
+const onDragStart = (event)=>{
+    event.dataTransfer.setData("text",event.target.id);
+
+    // set red background to function container
+    //addDropit();
 };
 
 const onDragOver = (event)=>{
     event.preventDefault();
 };
 
-const onDragEnd = (event)=>{
-    functionCommands.removeChild(functionCommands.getElementsByTagName("img")[0]);
-}
+
 
 const onDrop = (event)=>{
     event.preventDefault();
@@ -113,13 +123,26 @@ const onDrop = (event)=>{
     playButton.classList.remove("button-disabled");
 };
 
+function onMouseEnter(){
+    addDropit();
+}
+
+function onMouseLeave(){
+    removeDropit();
+}
+
 stopCondition.addEventListener("dragstart", onDragStart);
-stopCondition.addEventListener("dragend", onDragEnd);
+stopCondition.addEventListener("mouseenter", onMouseEnter);
+stopCondition.addEventListener("mouseleave", onMouseLeave);
+
 
 printCommand.addEventListener("dragstart",onDragStart);
-printCommand.addEventListener("dragend",onDragEnd);
+printCommand.addEventListener("mouseenter", onMouseEnter);
+printCommand.addEventListener("mouseleave", onMouseLeave);
+
 funcCommand.addEventListener("dragstart",onDragStart);
-funcCommand.addEventListener("dragend",onDragEnd);
+funcCommand.addEventListener("mouseenter", onMouseEnter);
+funcCommand.addEventListener("mouseleave", onMouseLeave);
 
 functionCommands.addEventListener("dragover", onDragOver);
 functionCommands.addEventListener("drop", onDrop);
@@ -143,7 +166,7 @@ async function executeFunctionContainer(){
         const commandType = getCommandType(command);
         command.classList.add("command-highlight");
         await executionTable[commandType].call(this);
-        await sleep(2000);
+        await sleep(COMMANDS_INTERVAL);
         command.classList.remove("command-highlight");
     }
     await greyFunctionContainer.call(this,0);
