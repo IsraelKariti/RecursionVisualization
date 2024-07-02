@@ -84,7 +84,11 @@ const onDragStart = (event)=>{
 
     // set red background to function container
     if(functionCommands.children.length === 0)
-        functionCommands.classList.add('dropit');
+        {
+            const img = document.createElement("img");
+            img.classList.add('dropit');
+            functionCommands.appendChild(img);
+        }
 };
 
 const onDragOver = (event)=>{
@@ -92,7 +96,7 @@ const onDragOver = (event)=>{
 };
 
 const onDragEnd = (event)=>{
-    functionCommands.classList.remove('dropit');
+    functionCommands.removeChild(functionCommands.getElementsByTagName("img")[0]);
 }
 
 const onDrop = (event)=>{
