@@ -164,20 +164,7 @@ function onMouseEnter(){
 function onMouseLeave(){
     removeDropit();
 }
-insertFunctionContainerToDOM();
 
-stopCondition.addEventListener("dragstart", onDragStart);
-stopCondition.addEventListener("mouseenter", onMouseEnter);
-stopCondition.addEventListener("mouseleave", onMouseLeave);
-
-
-printCommand.addEventListener("dragstart",onDragStart);
-printCommand.addEventListener("mouseenter", onMouseEnter);
-printCommand.addEventListener("mouseleave", onMouseLeave);
-
-funcCommand.addEventListener("dragstart",onDragStart);
-funcCommand.addEventListener("mouseenter", onMouseEnter);
-funcCommand.addEventListener("mouseleave", onMouseLeave);
 
 
 
@@ -283,15 +270,7 @@ const activatePlayButton = ()=>{
     playButton.classList.remove("hidden"); 
 };
 
-const onStopClick = ()=>{
-    // 
-    insertFunctionContainerToDOM();
-    enableDragability();
 
-    activatePlayButton();
-    stopButton.classList.add("button-disabled");
-    stopButton.setAttribute("disabled",true);
-}
 
 const onPauseClick = ()=>{
     console.log(COMMANDS_INTERVAL);
@@ -300,6 +279,36 @@ const onPauseClick = ()=>{
 
     changePauseToResume();
 }
+function clearTerminal(){
+    terminal.replaceChildren();
+}
+const onStopClick = ()=>{
+    // 
+    insertFunctionContainerToDOM();
+    enableDragability();
+
+    activatePlayButton();
+
+    clearTerminal();
+    stopButton.classList.add("button-disabled");
+    stopButton.setAttribute("disabled",true);
+}
+
+insertFunctionContainerToDOM();
+
+stopCondition.addEventListener("dragstart", onDragStart);
+stopCondition.addEventListener("mouseenter", onMouseEnter);
+stopCondition.addEventListener("mouseleave", onMouseLeave);
+
+
+printCommand.addEventListener("dragstart",onDragStart);
+printCommand.addEventListener("mouseenter", onMouseEnter);
+printCommand.addEventListener("mouseleave", onMouseLeave);
+
+funcCommand.addEventListener("dragstart",onDragStart);
+funcCommand.addEventListener("mouseenter", onMouseEnter);
+funcCommand.addEventListener("mouseleave", onMouseLeave);
+
 playButton.addEventListener("click", onPlayClick);
 resumeButton.addEventListener("click", onResumeClick);
 pauseButton.addEventListener("click", onPauseClick);
