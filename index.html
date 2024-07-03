@@ -13,7 +13,11 @@
 <body>
       <main>
         <aside>
-          <button class="play-button button-disabled">&#x25b6;</button>
+          <div class="buttons">
+            <button class="play-button button-disabled">&#x23f5;</button>
+            <button class="pause-button button-disabled hidden">&#x23f8;</button>
+            <button class="stop-button button-disabled">&#x23F9;</button>
+          </div>
           <div class="draggables">
             <div id="stop-condition" class="command draggable stop-condition" draggable="true">if(x==0)return</div>
             <div id="print-command" class="command draggable print-command" draggable="true">print(x)</div>

@@ -6,12 +6,27 @@ const printCommand = document.getElementById("print-command");
 const funcCommand = document.getElementById("func-command");
 const functionCommands = document.getElementById("commands-container");
 const playButton = document.getElementsByClassName("play-button")[0];
+const pauseButton = document.getElementsByClassName("pause-button")[0];
+const stopButton = document.getElementsByClassName("stop-button")[0];
 const functionContainerElement = document.getElementsByClassName("function-container")[0];
 const viewArea = document.getElementById("view-area");
 const terminal = document.getElementById("footer");
 let COMMANDS_INTERVAL = 2000;
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function sleep() {
+    return new Promise(resolve => {
+        const interval = COMMANDS_INTERVAL;
+
+        const checkIfIntervalChanged = ()=>{
+            // check if nothing changed during the sleep
+            if(interval ==  COMMANDS_INTERVAL)
+                resolve();
+            else
+                // if the interval has changed during the timeout than sleep again
+                setTimeout(resolve,COMMANDS_INTERVAL);
+        }
+
+        setTimeout(checkIfIntervalChanged, interval);
+    });
 }
 
 async function executePrint(){
@@ -182,24 +197,46 @@ async function setParameterVal(){
     });
 };
 
-async function setRecursionSignature(){
-    return new Promise((resolve)=>{
-        const functionSignature = this.getElementsByClassName("function-signature")[0];
-        functionSignature.replaceChildren("func("+this.x+")");
-        resolve();
-    });
+function setRecursionSignature(){
+    const functionSignature = this.getElementsByClassName("function-signature")[0];
+    functionSignature.replaceChildren("func("+this.x+")");
 };
 
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
 
-const onClick = async (event)=>{
+function activateStopButton(){
+    stopButton.classList.remove("button-disabled");
+}
+
+function changePlayToPause(){
+    playButton.classList.add("hidden");
+    pauseButton.classList.remove("hidden");
+    pauseButton.classList.remove("button-disabled");
+}
+
+const onPlayClick = async (event)=>{
+    changePlayToPause();
     setParameterVal.call(functionContainerElement);
     disableDragability();
-    await setRecursionSignature.call(functionContainerElement);
+    activateStopButton();
+    setRecursionSignature.call(functionContainerElement);
     await sleep(2000);
     await executeFunctionContainer.call(functionContainerElement);
 };
 
-playButton.addEventListener("click", onClick);
+const onStopClick = ()=>{
+    console.log(COMMANDS_INTERVAL);
+    COMMANDS_INTERVAL = 2000000000;
+    console.log(COMMANDS_INTERVAL);
+}
+
+const onPauseClick = ()=>{
+    console.log(COMMANDS_INTERVAL);
+    COMMANDS_INTERVAL = 2000000000;
+    console.log(COMMANDS_INTERVAL);
+}
+playButton.addEventListener("click", onPlayClick);
+pauseButton.addEventListener("click", onPauseClick);
+stopButton.addEventListener("click", onStopClick);
