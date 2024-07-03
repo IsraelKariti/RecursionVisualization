@@ -82,6 +82,53 @@ aside {
 .draggable
 {
   cursor:move;
+  position: relative;
+  overflow: hidden;
+}
+
+.draggable:hover .dash{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0px;
+  left: 0px;
+}
+.draggable:hover .upper-dash{
+  border-top: 5px dashed black;
+  width: 200%;
+  animation: moving-border-top 2.5s linear 0s infinite;
+}
+.draggable:hover .right-dash{
+  border-right: 5px dashed black;
+  height: 200%;
+  animation: moving-border-right 1s linear 0s infinite;
+}
+.draggable:hover .lower-dash{
+  border-bottom: 5px dashed black;
+  width: 200%;
+  animation: moving-border-bottom 2.5s linear 0s infinite;
+}
+.draggable:hover .left-dash{
+  border-left: 5px dashed black;
+  height: 200%;
+  animation: moving-border-left 1s linear 0s infinite;
+}
+
+@keyframes moving-border-top {
+  from{transform: translateX(0%);}
+  to{transform: translateX(-50%);}
+}
+@keyframes moving-border-right {
+  from{transform: translateY(0%);}
+  to{transform: translateY(-50%);}
+}
+@keyframes moving-border-bottom {
+  from{transform: translateX(-50%);}
+  to{transform: translateX(0%);}
+}
+@keyframes moving-border-left {
+  from{transform: translateY(-50%);}
+  to{transform: translateY(0%);}
 }
 
 .command{
@@ -249,3 +296,4 @@ footer{
     opacity: 1;
   }
 }
+
