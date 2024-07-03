@@ -185,7 +185,20 @@ function getCommandType(command){
     }
 };
 
+function addObserverForFunctionContainerRemoval(){
+    const mutationObserver = new MutationObserver((mutations)=>{
+        mutations.forEach(mutation => {
+            if(Array.from(mutation.removedNodes).includes(this))
+                this.functionRunning = false;
+        });
+    });
+    mutationObserver.observe(this.parentElement,{childList:true});
+}
+
 async function executeFunctionContainer(){
+
+    addObserverForFunctionContainerRemoval.call(this);
+
     this.functionRunning = true;
     const x = this.x;
     const commandsContainer = this.getElementsByClassName("commands-container")[0];
@@ -218,6 +231,9 @@ function setRecursionSignature(){
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
+function enableDragability(){
+    [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", true));
+}
 
 function activateStopButton(){
     stopButton.classList.remove("button-disabled");
@@ -227,6 +243,11 @@ function changePlayToPause(){
     playButton.classList.add("hidden");
     pauseButton.classList.remove("hidden");
     pauseButton.classList.remove("button-disabled");
+}
+
+function changeResumeToPause(){
+    resumeButton.classList.add("hidden");
+    pauseButton.classList.remove("hidden");
 }
 
 function changePauseToResume(){
@@ -248,11 +269,13 @@ const onPlayClick = async (event)=>{
 const onResumeClick = (event)=>{
     CURR_RESOLVE();
     COMMANDS_INTERVAL = 2000;
+    changeResumeToPause();
 };
 
 const onStopClick = ()=>{
     // 
     insertFunctionContainerToDOM();
+    enableDragability();
 }
 
 const onPauseClick = ()=>{
