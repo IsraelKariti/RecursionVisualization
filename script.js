@@ -17,7 +17,7 @@ function sleep() {
         const interval = COMMANDS_INTERVAL;
 
         const checkIfIntervalChanged = ()=>{
-            // check if nothing changed during the sleep
+            // check if nothing changed during the sleep!
             if(interval ==  COMMANDS_INTERVAL)
                 resolve();
             else
