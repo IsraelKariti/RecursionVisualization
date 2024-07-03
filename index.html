@@ -14,9 +14,10 @@
       <main>
         <aside>
           <div class="buttons">
-            <button class="play-button button-disabled">&#x23f5;</button>
-            <button class="pause-button button-disabled hidden">&#x23f8;</button>
-            <button class="stop-button button-disabled">&#x23F9;</button>
+            <button class="button play-button button-disabled">&#x23f5;</button>
+            <button class="button resume-button hidden">&#x23f5;</button>
+            <button class="button pause-button button-disabled hidden">&#x23f8;</button>
+            <button class="button stop-button button-disabled">&#x23F9;</button>
           </div>
           <div class="draggables">
             <div id="stop-condition" class="command draggable stop-condition" draggable="true">if(x==0)return</div>
@@ -26,20 +27,23 @@
           </aside>
 
         <div id="view-area">
-          <div class="function-container">
-            <div class="function-signature">
-              <span>func(x=</span>
-              <input type="number" inputmode="numeric" min="0" max="10" value="1"></input>
-              <span>)</span>
-            </div>
-            <div class="commands-container" id="commands-container"></div>
-          </div>
+          
         </div>
       </main>
       
       <footer id="footer">
         
       </footer>
+      <div style="display: none;" id="storage">
+        <div class="storage-function-container">
+          <div class="function-signature">
+            <span>func(x=</span>
+            <input type="number" inputmode="numeric" min="0" max="10" value="1"></input>
+            <span>)</span>
+          </div>
+          <div class="commands-container" id="commands-container"></div>
+        </div>
+      </div>
     <script src="script.js"></script>
 </body>
 </html>

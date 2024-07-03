@@ -4,28 +4,41 @@ git add . && git commit -m "initial commit" && git push
 const stopCondition = document.getElementById("stop-condition");
 const printCommand = document.getElementById("print-command");
 const funcCommand = document.getElementById("func-command");
-const functionCommands = document.getElementById("commands-container");
 const playButton = document.getElementsByClassName("play-button")[0];
+const resumeButton = document.getElementsByClassName("resume-button")[0];
 const pauseButton = document.getElementsByClassName("pause-button")[0];
 const stopButton = document.getElementsByClassName("stop-button")[0];
-const functionContainerElement = document.getElementsByClassName("function-container")[0];
+let functionContainer = null;
+let commandsContainer = null; 
 const viewArea = document.getElementById("view-area");
 const terminal = document.getElementById("footer");
+const storage = document.getElementById("storage");
+let CURR_RESOLVE;
 let COMMANDS_INTERVAL = 2000;
+
+function insertFunctionContainerToDOM(){
+    const sfc = storage.getElementsByClassName("storage-function-container")[0];
+    functionContainer = sfc.cloneNode(true);
+    functionContainer.classList.remove("storage-function-container");
+    functionContainer.classList.add("function-container");
+    commandsContainer = functionContainer.getElementsByClassName("commands-container")[0];
+    viewArea.replaceChildren(functionContainer);
+}
+insertFunctionContainerToDOM();
+
 function sleep() {
     return new Promise(resolve => {
         const interval = COMMANDS_INTERVAL;
-
+        CURR_RESOLVE = resolve;
         const checkIfIntervalChanged = ()=>{
             // check if nothing changed during the sleep!
             if(interval ==  COMMANDS_INTERVAL)
                 resolve();
             else
                 // if the interval has changed during the timeout than sleep again
-                setTimeout(resolve,COMMANDS_INTERVAL);
+                CURR_TIMEOUT = setTimeout(resolve,COMMANDS_INTERVAL);
         }
-
-        setTimeout(checkIfIntervalChanged, interval);
+        CURR_TIMEOUT = setTimeout(checkIfIntervalChanged, interval);
     });
 }
 
@@ -98,19 +111,19 @@ const executionTable = {
 
 function addDropit()
 {
-    if(functionCommands.children.length === 0)
+    if(commandsContainer.children.length === 0)
         {
             const img = document.createElement("img");
             img.classList.add('dropit');
-            functionCommands.appendChild(img);
+            commandsContainer.appendChild(img);
         }
 }
 
 function removeDropit()
 {
-    const dropit = functionCommands.getElementsByTagName("img")[0];
+    const dropit = commandsContainer.getElementsByTagName("img")[0];
     if(dropit != null)
-        functionCommands.removeChild(dropit);
+        commandsContainer.removeChild(dropit);
 }
 
 const onDragStart = (event)=>{
@@ -161,8 +174,8 @@ funcCommand.addEventListener("dragstart",onDragStart);
 funcCommand.addEventListener("mouseenter", onMouseEnter);
 funcCommand.addEventListener("mouseleave", onMouseLeave);
 
-functionCommands.addEventListener("dragover", onDragOver);
-functionCommands.addEventListener("drop", onDrop);
+commandsContainer.addEventListener("dragover", onDragOver);
+commandsContainer.addEventListener("drop", onDrop);
 
 function getCommandType(command){
     for(let i = 0; i < command.classList.length; i++)
@@ -216,27 +229,41 @@ function changePlayToPause(){
     pauseButton.classList.remove("button-disabled");
 }
 
+function changePauseToResume(){
+    playButton.classList.add("hidden");
+    pauseButton.classList.add("hidden");
+    resumeButton.classList.remove("hidden");
+}
+
 const onPlayClick = async (event)=>{
     changePlayToPause();
-    setParameterVal.call(functionContainerElement);
+    setParameterVal.call(functionContainer);
     disableDragability();
     activateStopButton();
-    setRecursionSignature.call(functionContainerElement);
+    setRecursionSignature.call(functionContainer);
     await sleep(2000);
-    await executeFunctionContainer.call(functionContainerElement);
+    await executeFunctionContainer.call(functionContainer);
+};
+
+const onResumeClick = (event)=>{
+    CURR_RESOLVE();
+    COMMANDS_INTERVAL = 2000;
 };
 
 const onStopClick = ()=>{
-    console.log(COMMANDS_INTERVAL);
-    COMMANDS_INTERVAL = 2000000000;
-    console.log(COMMANDS_INTERVAL);
+    // 
+    insertFunctionContainerToDOM();
 }
 
 const onPauseClick = ()=>{
     console.log(COMMANDS_INTERVAL);
     COMMANDS_INTERVAL = 2000000000;
     console.log(COMMANDS_INTERVAL);
+
+    changePauseToResume();
 }
 playButton.addEventListener("click", onPlayClick);
+resumeButton.addEventListener("click", onResumeClick);
 pauseButton.addEventListener("click", onPauseClick);
 stopButton.addEventListener("click", onStopClick);
+
