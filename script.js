@@ -22,9 +22,12 @@ function insertFunctionContainerToDOM(){
     functionContainer.classList.remove("storage-function-container");
     functionContainer.classList.add("function-container");
     commandsContainer = functionContainer.getElementsByClassName("commands-container")[0];
+    commandsContainer.addEventListener("dragover", onDragOver);
+    commandsContainer.addEventListener("drop", onDrop);
+
     viewArea.replaceChildren(functionContainer);
 }
-insertFunctionContainerToDOM();
+
 
 function sleep() {
     return new Promise(resolve => {
@@ -161,6 +164,7 @@ function onMouseEnter(){
 function onMouseLeave(){
     removeDropit();
 }
+insertFunctionContainerToDOM();
 
 stopCondition.addEventListener("dragstart", onDragStart);
 stopCondition.addEventListener("mouseenter", onMouseEnter);
@@ -175,8 +179,7 @@ funcCommand.addEventListener("dragstart",onDragStart);
 funcCommand.addEventListener("mouseenter", onMouseEnter);
 funcCommand.addEventListener("mouseleave", onMouseLeave);
 
-commandsContainer.addEventListener("dragover", onDragOver);
-commandsContainer.addEventListener("drop", onDrop);
+
 
 function getCommandType(command){
     for(let i = 0; i < command.classList.length; i++)
