@@ -88,7 +88,6 @@ async function executeFunc(){
 async function greyFunctionContainer(time=2000){
     return new Promise((resolve)=>{
         setTimeout(()=>{
-            console.log("NEED TO ITERATE OVER ALL HIERARCHY AND changing attributes ");
             this.getElementsByClassName("function-signature")[0].classList.add("function-disabled");
             this.getElementsByClassName("commands-container")[0].classList.add("function-disabled");
             [].forEach.call(this.getElementsByClassName("command"),ele=>
@@ -248,14 +247,15 @@ function changePauseToResume(){
 }
 
 const onPlayClick = async (event)=>{
+    const currFunctionContainer = functionContainer;
     changePlayToPause();
     stopButton.removeAttribute("disabled");
-    setParameterVal.call(functionContainer);
+    setParameterVal.call(currFunctionContainer);
     disableDragability();
     activateStopButton();
-    setRecursionSignature.call(functionContainer);
+    setRecursionSignature.call(currFunctionContainer);
     await sleep(2000);
-    await executeFunctionContainer.call(functionContainer);
+    await executeFunctionContainer.call(currFunctionContainer);
 };
 
 const onResumeClick = (event)=>{
@@ -264,13 +264,13 @@ const onResumeClick = (event)=>{
     changeResumeToPause();
 };
 
-const activatePlayButton = ()=>{
+const deactivatePlayButton = ()=>{
     resumeButton.classList.add("hidden");
     pauseButton.classList.add("hidden");
-    playButton.classList.remove("hidden"); 
+    playButton.classList.remove("hidden");
+    playButton.classList.add("button-disabled");
+    playButton.setAttribute("disabled",true); 
 };
-
-
 
 const onPauseClick = ()=>{
     console.log(COMMANDS_INTERVAL);
@@ -283,11 +283,10 @@ function clearTerminal(){
     terminal.replaceChildren();
 }
 const onStopClick = ()=>{
-    // 
     insertFunctionContainerToDOM();
     enableDragability();
 
-    activatePlayButton();
+    deactivatePlayButton();
 
     clearTerminal();
     stopButton.classList.add("button-disabled");

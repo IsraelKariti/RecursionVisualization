@@ -114,23 +114,6 @@ aside {
   animation: moving-border-left 1s linear 0s infinite;
 }
 
-@keyframes moving-border-top {
-  from{transform: translateX(0%);}
-  to{transform: translateX(-50%);}
-}
-@keyframes moving-border-right {
-  from{transform: translateY(0%);}
-  to{transform: translateY(-50%);}
-}
-@keyframes moving-border-bottom {
-  from{transform: translateX(-50%);}
-  to{transform: translateX(0%);}
-}
-@keyframes moving-border-left {
-  from{transform: translateY(-50%);}
-  to{transform: translateY(0%);}
-}
-
 .command{
   background-color: chocolate;
   border-radius: 20px;
@@ -297,3 +280,20 @@ footer{
   }
 }
 
+
+@keyframes moving-border-top {
+  from{transform: translateX(0%);}
+  to{transform: translateX(-50%);}
+}
+@keyframes moving-border-right {
+  from{transform: translateY(0%);}
+  to{transform: translateY(-50%);}
+}
+@keyframes moving-border-bottom {
+  from{transform: translateX(-50%);}
+  to{transform: translateX(0%);}
+}
+@keyframes moving-border-left {
+  from{transform: translateY(-50%);}
+  to{transform: translateY(0%);}
+}
