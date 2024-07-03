@@ -151,6 +151,7 @@ const onDrop = (event)=>{
     event.currentTarget.appendChild(newNode);
 
     playButton.classList.remove("button-disabled");
+    playButton.removeAttribute("disabled");
 };
 
 function onMouseEnter(){
@@ -258,6 +259,7 @@ function changePauseToResume(){
 
 const onPlayClick = async (event)=>{
     changePlayToPause();
+    stopButton.removeAttribute("disabled");
     setParameterVal.call(functionContainer);
     disableDragability();
     activateStopButton();
@@ -272,10 +274,20 @@ const onResumeClick = (event)=>{
     changeResumeToPause();
 };
 
+const activatePlayButton = ()=>{
+    resumeButton.classList.add("hidden");
+    pauseButton.classList.add("hidden");
+    playButton.classList.remove("hidden"); 
+};
+
 const onStopClick = ()=>{
     // 
     insertFunctionContainerToDOM();
     enableDragability();
+
+    activatePlayButton();
+    stopButton.classList.add("button-disabled");
+    stopButton.setAttribute("disabled",true);
 }
 
 const onPauseClick = ()=>{
