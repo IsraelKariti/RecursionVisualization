@@ -62,6 +62,8 @@ function clearCommandHighlights(){
     for(let i = 0 ; i < commands.length; i++)
     {
         commands[i].classList.remove("command-highlight");
+        commands[i].classList.remove("command-execution");
+
     }
 };
 
@@ -72,7 +74,6 @@ function setFunctionHighlight(){
 
 async function executeFunc(){
     return new Promise(async resolve=>{
-        //await sleep(2000);
         const newFunctionContainer = this.cloneNode(true);
         newFunctionContainer.x = this.x - 1;
         setRecursionSignature.call(newFunctionContainer);
@@ -198,6 +199,8 @@ async function executeFunctionContainer(){
 
         const commandType = getCommandType(command);
         command.classList.add("command-highlight");
+        command.classList.add("command-execution");
+
         await executionTable[commandType].call(this);
         await sleep(COMMANDS_INTERVAL);
         command.classList.remove("command-highlight");

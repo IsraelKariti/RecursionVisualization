@@ -211,6 +211,9 @@ input{
   text-align: center;
 }
 .command-highlight{
+  border: 3px solid red;
+}
+.command-execution{
   animation: frame-highlight-animation 1s;
 }
 .commands-container{
