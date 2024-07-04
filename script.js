@@ -293,7 +293,25 @@ const onStopClick = ()=>{
     stopButton.setAttribute("disabled",true);
 }
 
-insertFunctionContainerToDOM();
+function insertBubbleToFunctionSignature()
+{
+    const storage = document.getElementById("storage");
+    const bubble = storage.getElementsByClassName("bubble")[0];
+    const newBubble = bubble.cloneNode(true);
+    const buttonOK = newBubble.getElementsByClassName("bubble-button")[0];
+    buttonOK.addEventListener("click", (event)=>{
+        event.target.parentNode.parentNode.parentNode.remove();
+    });
+    functionContainer.getElementsByClassName("function-signature")[0].appendChild(newBubble);
+}
+
+function insertFirstFunctionContainerToDOM()
+{
+    insertFunctionContainerToDOM();
+    insertBubbleToFunctionSignature();
+}
+
+insertFirstFunctionContainerToDOM();
 
 stopCondition.addEventListener("dragstart", onDragStart);
 stopCondition.addEventListener("mouseenter", onMouseEnter);
