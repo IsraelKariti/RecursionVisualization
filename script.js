@@ -258,7 +258,7 @@ const onPlayClick = async (event)=>{
     activateStopButton();
     setRecursionSignature.call(currFunctionContainer);
     await sleep(2000);
-    await executeFunctionContainer.call(currFunctionContainer);
+    executeFunctionContainer.call(currFunctionContainer);
 };
 
 const onResumeClick = (event)=>{

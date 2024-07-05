@@ -33,10 +33,27 @@ aside {
   border-radius: 50%;
   background-color: green;
   margin: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: relative;
   font-size: 6rem;
+  text-align: center;
+}
+.button p{
+  margin: 0;
+  padding: 0;
+  position: absolute;
+}
+.play-button p{
+  bottom: 1px;
+}
+.pause-button p{
+  bottom: 4px;
+}
+.resume-button p{
+  bottom: 1px;
+}
+.stop-button p{
+  bottom: 8px;
+  left: 13px;
 }
 .play-button{
   font-size: 6rem;
