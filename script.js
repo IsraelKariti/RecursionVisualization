@@ -96,6 +96,7 @@ async function greyFunctionContainer(time=2000){
                 {
                     ele.classList.add("function-disabled");
                     ele.classList.remove("command-highlight");
+                    ele.getElementsByClassName("drag-image")[0].classList.add("function-disabled");
                 });
             resolve();
         },time);
@@ -132,9 +133,8 @@ function removeDropit()
 
 const onDragStart = (event)=>{
     event.dataTransfer.setData("text",event.target.id);
-
-    // set red background to function container
-    //addDropit();
+    const dragImage = event.target.getElementsByClassName("drag-image")[0];
+    event.dataTransfer.setDragImage(dragImage,20,10);
 };
 
 const onDragOver = (event)=>{

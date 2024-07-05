@@ -95,6 +95,9 @@ aside {
   border-radius: 10px;
   
 }
+.drag-image{
+  padding:0;
+}
 .dropit{
   width: 100%;
   height: 100%;
@@ -146,6 +149,11 @@ aside {
   font-weight: 700;
   font-family: "Rubik", sans-serif;
   font-size: 2rem;
+}
+.command button{
+  border: none;
+  background-color: chocolate;
+  font-weight: 700;
 }
 #view-area{
   display: flex;
@@ -263,7 +271,12 @@ footer{
   border: 4px solid black;
   border-radius: 10px;
 }
-.function-disabled{
+.command.function-disabled{
+  color: rgb(192, 192, 192);
+  background-color: rgb(227, 227, 227);
+  transition: 1s;
+}
+.drag-image.function-disabled{
   color: rgb(192, 192, 192);
   background-color: rgb(227, 227, 227);
   transition: 1s;
