@@ -7,6 +7,7 @@ const funcCommand = document.getElementById("func-command");
 const playButton = document.getElementsByClassName("play-button")[0];
 const resumeButton = document.getElementsByClassName("resume-button")[0];
 const pauseButton = document.getElementsByClassName("pause-button")[0];
+const replayButton = document.getElementsByClassName("replay-button")[0];
 const stopButton = document.getElementsByClassName("stop-button")[0];
 let functionContainer = null;
 let commandsContainer = null; 
@@ -140,8 +141,6 @@ const onDragOver = (event)=>{
     event.preventDefault();
 };
 
-
-
 const onDrop = (event)=>{
     event.preventDefault();
     const id = event.dataTransfer.getData("text");
@@ -164,9 +163,6 @@ function onMouseEnter(){
 function onMouseLeave(){
     removeDropit();
 }
-
-
-
 
 function getCommandType(command){
     for(let i = 0; i < command.classList.length; i++)
@@ -237,7 +233,11 @@ function changePlayToPause(){
     pauseButton.classList.remove("hidden");
     pauseButton.classList.remove("button-disabled");
 }
-
+function changeReplayToPause(){
+    replayButton.classList.add("hidden");
+    pauseButton.classList.remove("hidden");
+    pauseButton.classList.remove("button-disabled");
+}
 function changeResumeToPause(){
     resumeButton.classList.add("hidden");
     pauseButton.classList.remove("hidden");
@@ -248,6 +248,46 @@ function changePauseToResume(){
     pauseButton.classList.add("hidden");
     resumeButton.classList.remove("hidden");
 }
+function changeToReplay(){
+    playButton.classList.add("hidden");
+    pauseButton.classList.add("hidden");
+    resumeButton.classList.add("hidden");
+    replayButton.classList.remove("hidden");
+    replayButton.classList.remove("button-disabled");
+}
+function backupFunctionPrototype(){
+    const fpb = storage.getElementsByClassName("function-prototype-backup")[0];
+    const backup = this.cloneNode(true);
+    backup.x = this.x;
+    fpb.appendChild(backup);
+}
+
+const deactivatePlayButton = ()=>{
+    resumeButton.classList.add("hidden");
+    pauseButton.classList.add("hidden");
+    playButton.classList.remove("hidden");
+    replayButton.classList.add("hidden");
+    playButton.classList.add("button-disabled");
+    playButton.setAttribute("disabled",true); 
+};
+
+
+function clearTerminal(){
+    terminal.replaceChildren();
+}
+function changePlayToPause(){
+    playButton.classList.add("hidden");
+    pauseButton.classList.remove("hidden");
+    pauseButton.classList.remove("button-disabled");
+}
+
+function cloneFunctionFromStorageToViewArea(){
+    const functionPrototype = storage.getElementsByClassName("function-container")[0];
+    const functionPrototypeDuplicate = functionPrototype.cloneNode(true);
+    functionPrototypeDuplicate.x = functionPrototype.x;
+    viewArea.replaceChildren(functionPrototypeDuplicate);
+    functionContainer = functionPrototypeDuplicate;
+}
 
 const onPlayClick = async (event)=>{
     const currFunctionContainer = functionContainer;
@@ -257,8 +297,21 @@ const onPlayClick = async (event)=>{
     disableDragability();
     activateStopButton();
     setRecursionSignature.call(currFunctionContainer);
+    backupFunctionPrototype.call(currFunctionContainer);
     await sleep(2000);
-    executeFunctionContainer.call(currFunctionContainer);
+    await executeFunctionContainer.call(currFunctionContainer);
+    changeToReplay();
+};
+
+async function onReplayClick(){
+    terminal.replaceChildren();
+
+    changeReplayToPause();
+
+    cloneFunctionFromStorageToViewArea();
+
+    await executeFunctionContainer.call(functionContainer);
+    changeToReplay();
 };
 
 const onResumeClick = (event)=>{
@@ -267,24 +320,16 @@ const onResumeClick = (event)=>{
     changeResumeToPause();
 };
 
-const deactivatePlayButton = ()=>{
-    resumeButton.classList.add("hidden");
-    pauseButton.classList.add("hidden");
-    playButton.classList.remove("hidden");
-    playButton.classList.add("button-disabled");
-    playButton.setAttribute("disabled",true); 
-};
-
 const onPauseClick = ()=>{
     console.log(COMMANDS_INTERVAL);
     COMMANDS_INTERVAL = 2000000000;
     console.log(COMMANDS_INTERVAL);
 
     changePauseToResume();
-}
-function clearTerminal(){
-    terminal.replaceChildren();
-}
+};
+
+
+
 const onStopClick = ()=>{
     insertFunctionContainerToDOM();
     enableDragability();
@@ -294,7 +339,7 @@ const onStopClick = ()=>{
     clearTerminal();
     stopButton.classList.add("button-disabled");
     stopButton.setAttribute("disabled",true);
-}
+};
 
 function insertBubbleToFunctionSignature()
 {
@@ -332,5 +377,7 @@ funcCommand.addEventListener("mouseleave", onMouseLeave);
 playButton.addEventListener("click", onPlayClick);
 resumeButton.addEventListener("click", onResumeClick);
 pauseButton.addEventListener("click", onPauseClick);
+replayButton.addEventListener("click", onReplayClick);
 stopButton.addEventListener("click", onStopClick);
+
 

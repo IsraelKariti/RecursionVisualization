@@ -55,6 +55,10 @@ aside {
   bottom: 8px;
   left: 13px;
 }
+.replay-button p{
+  top: 2px;
+  left: 8px;
+}
 .play-button{
   font-size: 6rem;
 }
@@ -62,6 +66,9 @@ aside {
   font-size: 6rem;
 }
 .resume-button{
+  font-size: 6rem;
+}
+.replay-button{
   font-size: 6rem;
 }
 .stop-button{
