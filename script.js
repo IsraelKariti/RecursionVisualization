@@ -254,6 +254,8 @@ function changeToReplay(){
     resumeButton.classList.add("hidden");
     replayButton.classList.remove("hidden");
     replayButton.classList.remove("button-disabled");
+    stopButton.classList.remove("hidden");
+    stopButton.classList.remove("button-disabled");
 }
 function backupFunctionPrototype(){
     const fpb = storage.getElementsByClassName("function-prototype-backup")[0];
