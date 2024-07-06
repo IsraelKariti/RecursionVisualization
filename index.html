@@ -18,12 +18,21 @@
             <button class="button resume-button hidden"><p>&#x23f5;</p></button>
             <button class="button pause-button button-disabled hidden"><p>&#x23f8;</p></button>
             <button class="button replay-button button-disabled hidden"><p>&#x27f3;</p></button>
-
             <button class="button stop-button button-disabled" disabled="true"><p>&#x23F9;</p></button>
           </div>
+
+
+          
           <div class="draggables">
             <div id="stop-condition" class="command draggable stop-condition" draggable="true">
               <button class="drag-image">if(x==0)return</button>
+              <div class="dash upper-dash"></div>
+              <div class="dash right-dash"></div>
+              <div class="dash lower-dash"></div>
+              <div class="dash left-dash"></div>
+            </div>
+            <div id="stop-condition-1" class="command draggable stop-condition-1" draggable="true">
+              <button class="drag-image">if(x==0)return 1</button>
               <div class="dash upper-dash"></div>
               <div class="dash right-dash"></div>
               <div class="dash lower-dash"></div>
@@ -36,8 +45,41 @@
               <div class="dash lower-dash"></div>
               <div class="dash left-dash"></div>
             </div>
+            <div id="print-y-command" class="command draggable print-y-command" draggable="true">
+              <button class="drag-image">print(y)</button>
+              <div class="dash upper-dash"></div>
+              <div class="dash right-dash"></div>
+              <div class="dash lower-dash"></div>
+              <div class="dash left-dash"></div>
+            </div>
             <div id="func-command" class="command draggable func-command" draggable="true">
               <button class="drag-image">func(x-1)</button>
+              <div class="dash upper-dash"></div>
+              <div class="dash right-dash"></div>
+              <div class="dash lower-dash"></div>
+              <div class="dash left-dash"></div>
+            </div>
+            <div id="return-func-command" class="command draggable return-func-command" draggable="true">
+              <button class="drag-image">y = func(x-1)</button>
+              <div class="dash upper-dash"></div>
+              <div class="dash right-dash"></div>
+              <div class="dash lower-dash"></div>
+              <div class="dash left-dash"></div>
+            </div>
+            <div id="return-x-y" class="command draggable return-x-y" draggable="true">
+              <button class="drag-image">return x * y</button>
+              <div class="dash upper-dash"></div>
+              <div class="dash right-dash"></div>
+              <div class="dash lower-dash"></div>
+              <div class="dash left-dash"></div>
+            </div>
+            
+            <div id="print-command-free-text" class="command draggable print-command-free-text" draggable="true">
+              <button class="drag-image">
+                <span>print(</span>
+                <input type="text" maxlength="1"/>
+                <span>)</span>  
+              </button>
               <div class="dash upper-dash"></div>
               <div class="dash right-dash"></div>
               <div class="dash lower-dash"></div>

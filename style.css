@@ -150,6 +150,9 @@ aside {
   font-family: "Rubik", sans-serif;
   font-size: 2rem;
 }
+.command input{
+  display: inline;
+}
 .command button{
   border: none;
   background-color: chocolate;
@@ -165,7 +168,7 @@ aside {
   display: flex;
   flex-direction: column;
   margin: 1rem;
-  width: 20rem;
+  width: 24rem;
   align-items: center;
   border-radius: 10px;
 }

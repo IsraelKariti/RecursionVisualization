@@ -2,8 +2,14 @@
 git add . && git commit -m "initial commit" && git push
 */
 const stopCondition = document.getElementById("stop-condition");
+const stopCondition1 = document.getElementById("stop-condition-1");
 const printCommand = document.getElementById("print-command");
+const printYCommand = document.getElementById("print-y-command");
+const printCommandFreeText = document.getElementById("print-command-free-text");
 const funcCommand = document.getElementById("func-command");
+const returnFuncCommand = document.getElementById("return-func-command");
+const returnXY = document.getElementById("return-x-y");
+
 const playButton = document.getElementsByClassName("play-button")[0];
 const resumeButton = document.getElementsByClassName("resume-button")[0];
 const pauseButton = document.getElementsByClassName("pause-button")[0];
@@ -17,6 +23,74 @@ const storage = document.getElementById("storage");
 let CURR_RESOLVE;
 let COMMANDS_INTERVAL = 2000;
 
+function expressionParser(str){
+    while(str.includes("func")){
+        const funcIndex = str.indexOf("func");
+        const openBracketsIndex = str.indexOf("(");
+        const closeBracketsIndex = str.indexOf(")");
+        
+        const funcParamExpression = str.slice(openBracketsIndex+1,closeBracketsIndex);
+        const funcParamExpressionEvaluation = expressionParser(funcParamExpression);
+        const funcEvaluation = func(funcParamExpressionEvaluation);
+
+        str = str.slice(0,funcIndex) + funcEvaluation + str.slice(closeBracketsIndex+1);
+    }
+    
+    const evaluation = [];
+    let word = "";
+    for(const c of str){
+        if("*/+-".includes(c))
+        {
+            evaluation.push(word);
+            word = "";
+            evaluation.push(c);
+        }
+        else{
+            word += c;
+        }
+    }
+    evaluation.push(word);
+
+    const getOperandValue = (str)=>{
+        if(str in this)
+            return this[str];
+        return Number(str);
+    }
+
+    while(evaluation.includes("*")){
+        const index = evaluation.indexOf("*");
+        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const res = leftOperand * rightOperand;
+        evaluation.splice(index-1,3,res);
+    }
+    while(evaluation.includes("/")){
+        const index = evaluation.indexOf("/");
+        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const res = ~~( leftOperand / rightOperand);
+        evaluation.splice(index-1,3,res);
+    }
+    
+    while(evaluation.includes("-")){
+        const index = evaluation.indexOf("-");
+        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const res = leftOperand - rightOperand;
+        evaluation.splice(index-1,3,res);
+    }
+    while(evaluation.includes("+")){
+        const index = evaluation.indexOf("+");
+        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const res = leftOperand + rightOperand;
+        evaluation.splice(index-1,3,res);
+    }
+    if(evaluation[0] in this)
+        return this[evaluation[0]];
+    return evaluation[0];
+}
+
 function insertFunctionContainerToDOM(){
     const sfc = storage.getElementsByClassName("storage-function-container")[0];
     functionContainer = sfc.cloneNode(true);
@@ -28,7 +102,6 @@ function insertFunctionContainerToDOM(){
 
     viewArea.replaceChildren(functionContainer);
 }
-
 
 function sleep() {
     return new Promise(resolve => {
@@ -57,7 +130,36 @@ async function executePrint(){
     terminal.appendChild(line);
     line.scrollIntoView({block:"end"});
 };
-
+async function executePrintY(){
+    const line = document.createElement("p");
+    line.style.fontWeight = "700";
+    line.innerText = this.y;
+    line.style.scrollMargin = "50px";
+    line.style.width = "20px";
+    line.style.fontSize = "20px";
+    line.classList.add("terminal-text-appearance");
+    terminal.appendChild(line);
+    line.scrollIntoView({block:"end"});
+};
+function getValueFromPrintFreeText(command){
+    const txt = command.getElementsByTagName("button")[0].innerText;
+    const openBracketsIndex = txt.indexOf("(");
+    const closeBracketsIndex = txt.indexOf(")");
+    const parameterExpression = txt.slice(openBracketsIndex+1,closeBracketsIndex);
+    const val = expressionParser.call(this,parameterExpression);
+    return val;
+}
+async function executePrintFreeText(command){
+    const line = document.createElement("p");
+    line.style.fontWeight = "700";
+    line.innerText = getValueFromPrintFreeText.call(this,command);
+    line.style.scrollMargin = "50px";
+    line.style.width = "20px";
+    line.style.fontSize = "20px";
+    line.classList.add("terminal-text-appearance");
+    terminal.appendChild(line);
+    line.scrollIntoView({block:"end"});
+};
 function clearCommandHighlights(){
     const commands = this.getElementsByClassName("command");
     for(let i = 0 ; i < commands.length; i++)
@@ -87,6 +189,21 @@ async function executeFunc(){
     });
 };
 
+async function executeReturnFunc(){
+    return new Promise(async resolve=>{
+        const newFunctionContainer = this.cloneNode(true);
+        newFunctionContainer.x = this.x - 1;
+        setRecursionSignature.call(newFunctionContainer);
+        clearCommandHighlights.call(newFunctionContainer);
+        setFunctionHighlight.call(newFunctionContainer);
+        viewArea.appendChild(newFunctionContainer);
+        await sleep(2000);
+        const returnValue = await executeFunctionContainer.call(newFunctionContainer);
+        this.y = returnValue;
+        resolve();
+    });
+};
+
 async function greyFunctionContainer(time=2000){
     return new Promise((resolve)=>{
         setTimeout(()=>{
@@ -107,11 +224,27 @@ async function executeStopCondition(){
     if(this.x === 0)
         this.functionRunning = false;
 };
+async function executeStopCondition1(){
+    if(this.x === 0){
+        this.functionRunning = false;
+        this.returnValue = 1;
+    }
+};
+
+async function executeReturnXY(){
+    this.functionRunning = false;
+    this.returnValue = this.x * this.y;
+}
 
 const executionTable = {
     "print-command":executePrint,
+    "print-y-command":executePrintY,
+    "print-command-free-text":executePrintFreeText,
     "func-command": executeFunc,
+    "return-func-command": executeReturnFunc,
+    "return-x-y": executeReturnXY,
     "stop-condition": executeStopCondition,
+    "stop-condition-1": executeStopCondition1,
 };
 
 function addDropit()
@@ -197,11 +330,12 @@ async function executeFunctionContainer(){
         command.classList.add("command-highlight");
         command.classList.add("command-execution");
 
-        await executionTable[commandType].call(this);
+        await executionTable[commandType].call(this,command);
         await sleep(COMMANDS_INTERVAL);
         command.classList.remove("command-highlight");
     }
     await greyFunctionContainer.call(this,0);
+    return this.returnValue;
 }
 
 async function setParameterVal(){
@@ -216,7 +350,15 @@ function setRecursionSignature(){
     const functionSignature = this.getElementsByClassName("function-signature")[0];
     functionSignature.replaceChildren("func("+this.x+")");
 };
-
+function fixatePrintCommandsIput(){
+    const commandsContainer = this.getElementsByClassName("commands-container")[0];
+    const commands = commandsContainer.getElementsByClassName("print-command-free-text");
+    [].forEach.call(commands,(element)=>{
+        const currButton = element.getElementsByTagName("button")[0];
+        const currInputText = element.getElementsByTagName("input")[0];
+        currButton.replaceChildren("print("+currInputText.value+")");
+    });
+}
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
@@ -299,6 +441,7 @@ const onPlayClick = async (event)=>{
     disableDragability();
     activateStopButton();
     setRecursionSignature.call(currFunctionContainer);
+    fixatePrintCommandsIput.call(currFunctionContainer);
     backupFunctionPrototype.call(currFunctionContainer);
     await sleep(2000);
     await executeFunctionContainer.call(currFunctionContainer);
@@ -329,8 +472,6 @@ const onPauseClick = ()=>{
 
     changePauseToResume();
 };
-
-
 
 const onStopClick = ()=>{
     insertFunctionContainerToDOM();
@@ -367,14 +508,33 @@ stopCondition.addEventListener("dragstart", onDragStart);
 stopCondition.addEventListener("mouseenter", onMouseEnter);
 stopCondition.addEventListener("mouseleave", onMouseLeave);
 
+stopCondition1.addEventListener("dragstart", onDragStart);
+stopCondition1.addEventListener("mouseenter", onMouseEnter);
+stopCondition1.addEventListener("mouseleave", onMouseLeave);
 
 printCommand.addEventListener("dragstart",onDragStart);
 printCommand.addEventListener("mouseenter", onMouseEnter);
 printCommand.addEventListener("mouseleave", onMouseLeave);
 
+printYCommand.addEventListener("dragstart",onDragStart);
+printYCommand.addEventListener("mouseenter", onMouseEnter);
+printYCommand.addEventListener("mouseleave", onMouseLeave);
+
+printCommandFreeText.addEventListener("dragstart",onDragStart);
+printCommandFreeText.addEventListener("mouseenter", onMouseEnter);
+printCommandFreeText.addEventListener("mouseleave", onMouseLeave);
+
 funcCommand.addEventListener("dragstart",onDragStart);
 funcCommand.addEventListener("mouseenter", onMouseEnter);
 funcCommand.addEventListener("mouseleave", onMouseLeave);
+
+returnFuncCommand.addEventListener("dragstart",onDragStart);
+returnFuncCommand.addEventListener("mouseenter", onMouseEnter);
+returnFuncCommand.addEventListener("mouseleave", onMouseLeave);
+
+returnXY.addEventListener("dragstart",onDragStart);
+returnXY.addEventListener("mouseenter", onMouseEnter);
+returnXY.addEventListener("mouseleave", onMouseLeave);
 
 playButton.addEventListener("click", onPlayClick);
 resumeButton.addEventListener("click", onResumeClick);
