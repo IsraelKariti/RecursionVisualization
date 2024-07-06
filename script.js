@@ -4,8 +4,8 @@ git add . && git commit -m "initial commit" && git push
 const stopCondition = document.getElementById("stop-condition");
 const stopCondition1 = document.getElementById("stop-condition-1");
 const printCommand = document.getElementById("print-command");
-const printYCommand = document.getElementById("print-y-command");
 const printCommandFreeText = document.getElementById("print-command-free-text");
+const commandFreeText = document.getElementById("command-free-text");
 const funcCommand = document.getElementById("func-command");
 const returnFuncCommand = document.getElementById("return-func-command");
 const returnXY = document.getElementById("return-x-y");
@@ -130,17 +130,6 @@ async function executePrint(){
     terminal.appendChild(line);
     line.scrollIntoView({block:"end"});
 };
-async function executePrintY(){
-    const line = document.createElement("p");
-    line.style.fontWeight = "700";
-    line.innerText = this.y;
-    line.style.scrollMargin = "50px";
-    line.style.width = "20px";
-    line.style.fontSize = "20px";
-    line.classList.add("terminal-text-appearance");
-    terminal.appendChild(line);
-    line.scrollIntoView({block:"end"});
-};
 function getValueFromPrintFreeText(command){
     const txt = command.getElementsByTagName("button")[0].innerText;
     const openBracketsIndex = txt.indexOf("(");
@@ -159,6 +148,17 @@ async function executePrintFreeText(command){
     line.classList.add("terminal-text-appearance");
     terminal.appendChild(line);
     line.scrollIntoView({block:"end"});
+};
+
+async function executeFreeText(command){
+    let inputText = command.getElementsByTagName("button")[0].innerText;
+    inputText = inputText.split(" ").join("");
+    const parts = inputText.split("=");
+    const lhs = parts[0];
+    const rhs = parts[1];
+    
+    const rhsEvaluation = expressionParser(rhs);
+    this[lhs] = Number(rhsEvaluation);
 };
 function clearCommandHighlights(){
     const commands = this.getElementsByClassName("command");
@@ -238,8 +238,8 @@ async function executeReturnXY(){
 
 const executionTable = {
     "print-command":executePrint,
-    "print-y-command":executePrintY,
     "print-command-free-text":executePrintFreeText,
+    "command-free-text":executeFreeText,
     "func-command": executeFunc,
     "return-func-command": executeReturnFunc,
     "return-x-y": executeReturnXY,
@@ -359,6 +359,15 @@ function fixatePrintCommandsIput(){
         currButton.replaceChildren("print("+currInputText.value+")");
     });
 }
+function fixateFreeTextCommands(){
+    const commandsContainer = this.getElementsByClassName("commands-container")[0];
+    const commands = commandsContainer.getElementsByClassName("command-free-text");
+    [].forEach.call(commands,(element)=>{
+        const currButton = element.getElementsByTagName("button")[0];
+        const currInputText = element.getElementsByTagName("input")[0];
+        currButton.replaceChildren(currInputText.value);
+    });
+}
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
@@ -442,6 +451,7 @@ const onPlayClick = async (event)=>{
     activateStopButton();
     setRecursionSignature.call(currFunctionContainer);
     fixatePrintCommandsIput.call(currFunctionContainer);
+    fixateFreeTextCommands.call(currFunctionContainer);
     backupFunctionPrototype.call(currFunctionContainer);
     await sleep(2000);
     await executeFunctionContainer.call(currFunctionContainer);
@@ -516,13 +526,13 @@ printCommand.addEventListener("dragstart",onDragStart);
 printCommand.addEventListener("mouseenter", onMouseEnter);
 printCommand.addEventListener("mouseleave", onMouseLeave);
 
-printYCommand.addEventListener("dragstart",onDragStart);
-printYCommand.addEventListener("mouseenter", onMouseEnter);
-printYCommand.addEventListener("mouseleave", onMouseLeave);
-
 printCommandFreeText.addEventListener("dragstart",onDragStart);
 printCommandFreeText.addEventListener("mouseenter", onMouseEnter);
 printCommandFreeText.addEventListener("mouseleave", onMouseLeave);
+
+commandFreeText.addEventListener("dragstart",onDragStart);
+commandFreeText.addEventListener("mouseenter", onMouseEnter);
+commandFreeText.addEventListener("mouseleave", onMouseLeave);
 
 funcCommand.addEventListener("dragstart",onDragStart);
 funcCommand.addEventListener("mouseenter", onMouseEnter);

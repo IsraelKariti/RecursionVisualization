@@ -98,6 +98,10 @@ aside {
 .drag-image{
   padding:0;
 }
+.drag-image input{
+  width: auto;
+  max-width: 80px;
+}
 .dropit{
   width: 100%;
   height: 100%;
