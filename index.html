@@ -38,13 +38,6 @@
               <div class="dash lower-dash"></div>
               <div class="dash left-dash"></div>
             </div>
-            <div id="print-command" class="command draggable print-command" draggable="true">
-              <button class="drag-image">print(x)</button>
-              <div class="dash upper-dash"></div>
-              <div class="dash right-dash"></div>
-              <div class="dash lower-dash"></div>
-              <div class="dash left-dash"></div>
-            </div>
             <div id="func-command" class="command draggable func-command" draggable="true">
               <button class="drag-image">func(x-1)</button>
               <div class="dash upper-dash"></div>
@@ -80,21 +73,24 @@
             </div>
             <div id="if-command-free-text" class="command draggable if-command-free-text" draggable="true">
               <button class="drag-image">
-                <span>if(</span>
-                <input class="left" type="text" maxlength="1"/>
-                <select class="operator">
-                  <option selected>==</option>
-                  <option>!=</option>
-                  <option>></option>
-                  <option>>=</option>
-                  <option>&#x003c;</option>
-                  <option>&#x003c;=</option>
-                </select>
-                <input class="right" type="text" maxlength="1"/>
-                <span>)</span>
-                <br/>  
-                <span>return</span>  
-                <input class="return-expression" type="text" maxlength="1"/>
+                <div class="if-statement">
+                  <span>if(</span>
+                  <input class="left" type="text" maxlength="1"/>
+                  <select class="operator">
+                    <option selected>==</option>
+                    <option>!=</option>
+                    <option>></option>
+                    <option>>=</option>
+                    <option>&#x003c;</option>
+                    <option>&#x003c;=</option>
+                  </select>
+                  <input class="right" type="text" maxlength="1"/>
+                  <span>)</span>
+                </div>
+                <div class="return-statement">
+                  <span>return</span>  
+                  <input class="return-expression" type="text" maxlength="1"/>
+                </div>
               </button>
               <div class="dash upper-dash"></div>
               <div class="dash right-dash"></div>

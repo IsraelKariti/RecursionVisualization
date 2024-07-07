@@ -3,7 +3,6 @@ git add . && git commit -m "initial commit" && git push
 */
 const stopCondition = document.getElementById("stop-condition");
 const stopCondition1 = document.getElementById("stop-condition-1");
-const printCommand = document.getElementById("print-command");
 const printCommandFreeText = document.getElementById("print-command-free-text");
 const commandFreeText = document.getElementById("command-free-text");
 const ifCommandFreeText = document.getElementById("if-command-free-text");
@@ -123,17 +122,6 @@ function sleep() {
     });
 }
 
-async function executePrint(){
-    const line = document.createElement("p");
-    line.style.fontWeight = "700";
-    line.innerText = this.x;
-    line.style.scrollMargin = "50px";
-    line.style.width = "20px";
-    line.style.fontSize = "20px";
-    line.classList.add("terminal-text-appearance");
-    terminal.appendChild(line);
-    line.scrollIntoView({block:"end"});
-};
 function getValueFromPrintFreeText(command){
     const txt = command.getElementsByTagName("button")[0].innerText;
     const openBracketsIndex = txt.indexOf("(");
@@ -145,7 +133,7 @@ function getValueFromPrintFreeText(command){
 async function executePrintFreeText(command){
     const line = document.createElement("p");
     line.style.fontWeight = "700";
-    line.innerText = getValueFromPrintFreeText.call(this,command);
+    line.innerText = await getValueFromPrintFreeText.call(this,command);
     line.style.scrollMargin = "50px";
     line.style.width = "20px";
     line.style.fontSize = "20px";
@@ -169,15 +157,32 @@ async function executeFreeText(command){
         expressionParser.call(this,rhs);
     }
 };
-function isConditionTrue(button){
-    const left = button.getElementsByClassName("left")[0].value;
-    const right = button.getElementsByClassName("right")[0].value;
-    const select = button.getElementsByClassName("operator")[0];
-    const operator = select.selectedOptions[0];
-    const operatorText = operator.label;
+function splitConditionByDelimiter(condition,delim){
+
+}
+function splitCondition(condition){
+    const delimiters = ["==","!=",">",">=","<","<="];
+    let parts = [];
+    let i = -1;
+    do{
+        i++;
+        parts = condition.split(delimiters[i]);
+    }while(parts.length<2);
+    parts.splice(1,0,delimiters[i]);
+    return parts;
+}
+function isConditionTrue(ifStatement){
+    const leftBracketsIndex = ifStatement.indexOf("(");
+    const rightBracketsIndex = ifStatement.indexOf(")");
+    const condition = ifStatement.slice(leftBracketsIndex+1,rightBracketsIndex);
+    const parts = splitCondition(condition);
+
+    const left = parts[0];
+    const right = parts[2];
     const leftVal = getOperandNumericValue.call(this,left);
     const rightVal = getOperandNumericValue.call(this,right);
-    switch(operatorText){
+    const operator = parts[1];
+    switch(operator){
         case "==":
             return leftVal == rightVal;
         case "!=":
@@ -192,13 +197,19 @@ function isConditionTrue(button){
             return leftVal <= rightVal;
     }
 }
-async function executeIfFreeText(command){
-    let button = command.getElementsByTagName("button")[0];
-    const conditionVal = isConditionTrue.call(this,button);
+function getReturnStatementValue(returnStatement){
+    const returnWordIndex = returnStatement.indexOf("return");
+    return returnStatement.slice(returnWordIndex+6);
+}
+async function executeStopConditionFreeText(command){
+    const ifStatementText = command.getElementsByClassName("if-statement")[0].innerText;
+    const returnStatementText = command.getElementsByClassName("return-statement")[0].innerText;
+
+    const conditionVal = isConditionTrue.call(this,ifStatementText);
     if(conditionVal){
-        const returnElement = button.getElementsByClassName("return-expression")[0];
-        const returnExpression = returnElement.value;
-        const returnVal = await expressionParser.call(this,returnExpression);
+        let returnStatementValue = getReturnStatementValue(returnStatementText);
+        returnStatementValue = returnStatementValue.split(" ").join("");
+        const returnVal = await expressionParser.call(this,returnStatementValue);
         this.returnValue = returnVal;
         this.functionRunning = false;
     }
@@ -280,10 +291,9 @@ async function executeReturnXY(){
 }
 
 const executionTable = {
-    "print-command":executePrint,
     "print-command-free-text":executePrintFreeText,
     "command-free-text":executeFreeText,
-    "if-command-free-text":executeIfFreeText,
+    "if-command-free-text":executeStopConditionFreeText,
     "func-command": executeFunc,
     "return-func-command": executeReturnFunc,
     "return-x-y": executeReturnXY,
@@ -412,6 +422,31 @@ function fixateFreeTextCommands(){
         currButton.replaceChildren(currInputText.value);
     });
 }
+function getIfStatementString(statement){
+    const leftOperand = statement.getElementsByClassName("left")[0].value;
+    const operator = statement.getElementsByClassName("operator")[0];
+    const operatorVal = operator.selectedOptions[0].label;
+    const rightOperand = statement.getElementsByClassName("right")[0].value;
+    return leftOperand+operatorVal+rightOperand;
+}
+function getReturnStatementString(statement){
+    const returnExpressionValue = statement.getElementsByClassName("return-expression")[0].value;
+    return returnExpressionValue;
+}
+function fixateStopConditionFreeTextCommands(){
+    const commandsContainer = this.getElementsByClassName("commands-container")[0];
+    const commands = commandsContainer.getElementsByClassName("if-command-free-text");
+    [].forEach.call(commands,(element)=>{
+        const ifStatementElement = element.getElementsByClassName("if-statement")[0];
+        const ifStatementString = getIfStatementString(ifStatementElement);
+        ifStatementElement.replaceChildren("if("+ifStatementString+")");
+
+        const returnStatementElement = element.getElementsByClassName("return-statement")[0];
+        const returnStatementString = getReturnStatementString(returnStatementElement);
+        returnStatementElement.replaceChildren("return "+returnStatementString);
+    });
+}
+
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
@@ -496,6 +531,7 @@ const onPlayClick = async (event)=>{
     setRecursionSignature.call(currFunctionContainer);
     fixatePrintCommandsIput.call(currFunctionContainer);
     fixateFreeTextCommands.call(currFunctionContainer);
+    fixateStopConditionFreeTextCommands.call(currFunctionContainer);
     backupFunctionPrototype.call(currFunctionContainer);
     await sleep(2000);
     await executeFunctionContainer.call(currFunctionContainer);
@@ -565,10 +601,6 @@ stopCondition.addEventListener("mouseleave", onMouseLeave);
 stopCondition1.addEventListener("dragstart", onDragStart);
 stopCondition1.addEventListener("mouseenter", onMouseEnter);
 stopCondition1.addEventListener("mouseleave", onMouseLeave);
-
-printCommand.addEventListener("dragstart",onDragStart);
-printCommand.addEventListener("mouseenter", onMouseEnter);
-printCommand.addEventListener("mouseleave", onMouseLeave);
 
 printCommandFreeText.addEventListener("dragstart",onDragStart);
 printCommandFreeText.addEventListener("mouseenter", onMouseEnter);

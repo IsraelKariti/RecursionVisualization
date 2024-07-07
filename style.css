@@ -101,7 +101,7 @@ aside {
 
 .drag-image input{
   width: auto;
-  max-width: 80px;
+  max-width: 70px;
 }
 .if-command-free-text{
   height: fit-content;
