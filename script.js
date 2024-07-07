@@ -6,6 +6,7 @@ const stopCondition1 = document.getElementById("stop-condition-1");
 const printCommand = document.getElementById("print-command");
 const printCommandFreeText = document.getElementById("print-command-free-text");
 const commandFreeText = document.getElementById("command-free-text");
+const ifCommandFreeText = document.getElementById("if-command-free-text");
 const funcCommand = document.getElementById("func-command");
 const returnFuncCommand = document.getElementById("return-func-command");
 const returnXY = document.getElementById("return-x-y");
@@ -23,14 +24,23 @@ const storage = document.getElementById("storage");
 let CURR_RESOLVE;
 let COMMANDS_INTERVAL = 2000;
 
-function expressionParser(str){
+function getOperandNumericValue(str){
+    if(str in this)
+        return Number(this[str]);
+    return Number(str);
+}
+
+async function expressionParser(str){
     while(str.includes("func")){
         const funcIndex = str.indexOf("func");
         const openBracketsIndex = str.indexOf("(");
         const closeBracketsIndex = str.indexOf(")");
         
         const funcParamExpression = str.slice(openBracketsIndex+1,closeBracketsIndex);
-        const funcParamExpressionEvaluation = expressionParser(funcParamExpression);
+        const funcParamExpressionEvaluation = expressionParser.call(this,funcParamExpression);
+        //every thing is ready of the next iteration
+        // i can literaly oopen another container with all the commands
+        // and i can fixate its signature
         const funcEvaluation = func(funcParamExpressionEvaluation);
 
         str = str.slice(0,funcIndex) + funcEvaluation + str.slice(closeBracketsIndex+1);
@@ -51,38 +61,32 @@ function expressionParser(str){
     }
     evaluation.push(word);
 
-    const getOperandValue = (str)=>{
-        if(str in this)
-            return this[str];
-        return Number(str);
-    }
-
     while(evaluation.includes("*")){
         const index = evaluation.indexOf("*");
-        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
-        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const leftOperand = getOperandNumericValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandNumericValue.call(this,evaluation[index+1]);
         const res = leftOperand * rightOperand;
         evaluation.splice(index-1,3,res);
     }
     while(evaluation.includes("/")){
         const index = evaluation.indexOf("/");
-        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
-        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const leftOperand = getOperandNumericValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandNumericValue.call(this,evaluation[index+1]);
         const res = ~~( leftOperand / rightOperand);
         evaluation.splice(index-1,3,res);
     }
     
     while(evaluation.includes("-")){
         const index = evaluation.indexOf("-");
-        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
-        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const leftOperand = getOperandNumericValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandNumericValue.call(this,evaluation[index+1]);
         const res = leftOperand - rightOperand;
         evaluation.splice(index-1,3,res);
     }
     while(evaluation.includes("+")){
         const index = evaluation.indexOf("+");
-        const leftOperand = getOperandValue.call(this,evaluation[index-1]);
-        const rightOperand = getOperandValue.call(this,evaluation[index+1]);
+        const leftOperand = getOperandNumericValue.call(this,evaluation[index-1]);
+        const rightOperand = getOperandNumericValue.call(this,evaluation[index+1]);
         const res = leftOperand + rightOperand;
         evaluation.splice(index-1,3,res);
     }
@@ -153,12 +157,51 @@ async function executePrintFreeText(command){
 async function executeFreeText(command){
     let inputText = command.getElementsByTagName("button")[0].innerText;
     inputText = inputText.split(" ").join("");
-    const parts = inputText.split("=");
-    const lhs = parts[0];
-    const rhs = parts[1];
-    
-    const rhsEvaluation = expressionParser(rhs);
-    this[lhs] = Number(rhsEvaluation);
+    if(inputText.includes("=")){
+        const parts = inputText.split("=");
+        const lhs = parts[0];
+        const rhs = parts[1];
+        
+        const rhsEvaluation = expressionParser.call(this,rhs);
+        this[lhs] = Number(rhsEvaluation);
+    }
+    else{
+        expressionParser.call(this,rhs);
+    }
+};
+function isConditionTrue(button){
+    const left = button.getElementsByClassName("left")[0].value;
+    const right = button.getElementsByClassName("right")[0].value;
+    const select = button.getElementsByClassName("operator")[0];
+    const operator = select.selectedOptions[0];
+    const operatorText = operator.label;
+    const leftVal = getOperandNumericValue.call(this,left);
+    const rightVal = getOperandNumericValue.call(this,right);
+    switch(operatorText){
+        case "==":
+            return leftVal == rightVal;
+        case "!=":
+            return leftVal != rightVal;
+        case ">":
+            return leftVal > rightVal;
+        case ">=":
+            return leftVal >= rightVal;
+        case "<":
+            return leftVal < rightVal;
+        case "<=":
+            return leftVal <= rightVal;
+    }
+}
+async function executeIfFreeText(command){
+    let button = command.getElementsByTagName("button")[0];
+    const conditionVal = isConditionTrue.call(this,button);
+    if(conditionVal){
+        const returnElement = button.getElementsByClassName("return-expression")[0];
+        const returnExpression = returnElement.value;
+        const returnVal = await expressionParser.call(this,returnExpression);
+        this.returnValue = returnVal;
+        this.functionRunning = false;
+    }
 };
 function clearCommandHighlights(){
     const commands = this.getElementsByClassName("command");
@@ -175,10 +218,10 @@ function setFunctionHighlight(){
     functionSignature.classList.add("function-container-highlight");
 }
 
-async function executeFunc(){
+async function executeFunc(x){
     return new Promise(async resolve=>{
         const newFunctionContainer = this.cloneNode(true);
-        newFunctionContainer.x = this.x - 1;
+        newFunctionContainer.x = this.x - 1;//X SHOULD BE THE PARAMETER OF THE FUNCTION
         setRecursionSignature.call(newFunctionContainer);
         clearCommandHighlights.call(newFunctionContainer);
         setFunctionHighlight.call(newFunctionContainer);
@@ -240,6 +283,7 @@ const executionTable = {
     "print-command":executePrint,
     "print-command-free-text":executePrintFreeText,
     "command-free-text":executeFreeText,
+    "if-command-free-text":executeIfFreeText,
     "func-command": executeFunc,
     "return-func-command": executeReturnFunc,
     "return-x-y": executeReturnXY,
@@ -533,6 +577,10 @@ printCommandFreeText.addEventListener("mouseleave", onMouseLeave);
 commandFreeText.addEventListener("dragstart",onDragStart);
 commandFreeText.addEventListener("mouseenter", onMouseEnter);
 commandFreeText.addEventListener("mouseleave", onMouseLeave);
+
+ifCommandFreeText.addEventListener("dragstart",onDragStart);
+ifCommandFreeText.addEventListener("mouseenter", onMouseEnter);
+ifCommandFreeText.addEventListener("mouseleave", onMouseLeave);
 
 funcCommand.addEventListener("dragstart",onDragStart);
 funcCommand.addEventListener("mouseenter", onMouseEnter);

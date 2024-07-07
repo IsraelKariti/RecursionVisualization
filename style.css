@@ -98,9 +98,19 @@ aside {
 .drag-image{
   padding:0;
 }
+
 .drag-image input{
   width: auto;
   max-width: 80px;
+}
+.if-command-free-text{
+  height: fit-content;
+}
+select{
+  appearance: none;
+}
+.if-command-free-text input{
+  width: 30px;
 }
 .dropit{
   width: 100%;
