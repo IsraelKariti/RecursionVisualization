@@ -1,14 +1,11 @@
 /*
 git add . && git commit -m "initial commit" && git push
 */
-const stopCondition = document.getElementById("stop-condition");
-const stopCondition1 = document.getElementById("stop-condition-1");
 const printCommandFreeText = document.getElementById("print-command-free-text");
 const commandFreeText = document.getElementById("command-free-text");
 const ifCommandFreeText = document.getElementById("if-command-free-text");
 const funcCommand = document.getElementById("func-command");
-const returnFuncCommand = document.getElementById("return-func-command");
-const returnXY = document.getElementById("return-x-y");
+const returnStatementFreeText = document.getElementById("return-statement-free-text");
 
 const playButton = document.getElementsByClassName("play-button")[0];
 const resumeButton = document.getElementsByClassName("resume-button")[0];
@@ -36,11 +33,11 @@ async function expressionParser(str){
         const closeBracketsIndex = str.indexOf(")");
         
         const funcParamExpression = str.slice(openBracketsIndex+1,closeBracketsIndex);
-        const funcParamExpressionEvaluation = expressionParser.call(this,funcParamExpression);
+        const funcParamExpressionEvaluation = await expressionParser.call(this,funcParamExpression);
         //every thing is ready of the next iteration
         // i can literaly oopen another container with all the commands
         // and i can fixate its signature
-        const funcEvaluation = func(funcParamExpressionEvaluation);
+        const funcEvaluation = await executeFunc.call(this,funcParamExpressionEvaluation);
 
         str = str.slice(0,funcIndex) + funcEvaluation + str.slice(closeBracketsIndex+1);
     }
@@ -122,12 +119,12 @@ function sleep() {
     });
 }
 
-function getValueFromPrintFreeText(command){
+async function getValueFromPrintFreeText(command){
     const txt = command.getElementsByTagName("button")[0].innerText;
     const openBracketsIndex = txt.indexOf("(");
     const closeBracketsIndex = txt.indexOf(")");
     const parameterExpression = txt.slice(openBracketsIndex+1,closeBracketsIndex);
-    const val = expressionParser.call(this,parameterExpression);
+    const val = await expressionParser.call(this,parameterExpression);
     return val;
 }
 async function executePrintFreeText(command){
@@ -150,11 +147,11 @@ async function executeFreeText(command){
         const lhs = parts[0];
         const rhs = parts[1];
         
-        const rhsEvaluation = expressionParser.call(this,rhs);
+        const rhsEvaluation = await expressionParser.call(this,rhs);
         this[lhs] = Number(rhsEvaluation);
     }
     else{
-        expressionParser.call(this,rhs);
+        await expressionParser.call(this,inputText);
     }
 };
 function splitConditionByDelimiter(condition,delim){
@@ -220,7 +217,6 @@ function clearCommandHighlights(){
     {
         commands[i].classList.remove("command-highlight");
         commands[i].classList.remove("command-execution");
-
     }
 };
 
@@ -232,29 +228,14 @@ function setFunctionHighlight(){
 async function executeFunc(x){
     return new Promise(async resolve=>{
         const newFunctionContainer = this.cloneNode(true);
-        newFunctionContainer.x = this.x - 1;//X SHOULD BE THE PARAMETER OF THE FUNCTION
+        newFunctionContainer.x = x;//X SHOULD BE THE PARAMETER OF THE FUNCTION
         setRecursionSignature.call(newFunctionContainer);
         clearCommandHighlights.call(newFunctionContainer);
         setFunctionHighlight.call(newFunctionContainer);
         viewArea.appendChild(newFunctionContainer);
         await sleep(2000);
-        await executeFunctionContainer.call(newFunctionContainer);
-        resolve();
-    });
-};
-
-async function executeReturnFunc(){
-    return new Promise(async resolve=>{
-        const newFunctionContainer = this.cloneNode(true);
-        newFunctionContainer.x = this.x - 1;
-        setRecursionSignature.call(newFunctionContainer);
-        clearCommandHighlights.call(newFunctionContainer);
-        setFunctionHighlight.call(newFunctionContainer);
-        viewArea.appendChild(newFunctionContainer);
-        await sleep(2000);
-        const returnValue = await executeFunctionContainer.call(newFunctionContainer);
-        this.y = returnValue;
-        resolve();
+        const returnedValue = await executeFunctionContainer.call(newFunctionContainer);
+        resolve(returnedValue);
     });
 };
 
@@ -267,27 +248,20 @@ async function greyFunctionContainer(time=2000){
                 {
                     ele.classList.add("function-disabled");
                     ele.classList.remove("command-highlight");
-                    ele.getElementsByClassName("drag-image")[0].classList.add("function-disabled");
+                    ele.getElementsByClassName("drag-image")[0]?.classList.add("function-disabled");
                 });
             resolve();
         },time);
     });
 }
 
-async function executeStopCondition(){
-    if(this.x === 0)
-        this.functionRunning = false;
-};
-async function executeStopCondition1(){
-    if(this.x === 0){
-        this.functionRunning = false;
-        this.returnValue = 1;
-    }
-};
-
-async function executeReturnXY(){
+async function executeReturnStatementFreeText(command){
     this.functionRunning = false;
-    this.returnValue = this.x * this.y;
+    
+    let text = getReturnStatementValue(command.innerText);
+    text = text.split(" ").join("");
+    const value = await expressionParser.call(this,text);
+    this.returnValue = value;
 }
 
 const executionTable = {
@@ -295,10 +269,7 @@ const executionTable = {
     "command-free-text":executeFreeText,
     "if-command-free-text":executeStopConditionFreeText,
     "func-command": executeFunc,
-    "return-func-command": executeReturnFunc,
-    "return-x-y": executeReturnXY,
-    "stop-condition": executeStopCondition,
-    "stop-condition-1": executeStopCondition1,
+    "return-statement-free-text": executeReturnStatementFreeText,
 };
 
 function addDropit()
@@ -446,7 +417,14 @@ function fixateStopConditionFreeTextCommands(){
         returnStatementElement.replaceChildren("return "+returnStatementString);
     });
 }
-
+function fixateReturnFreeTextCommands(){
+    const commandsContainer = this.getElementsByClassName("commands-container")[0];
+    const commands = commandsContainer.getElementsByClassName("return-statement-free-text");
+    [].forEach.call(commands,(command)=>{
+        const inputText = command.getElementsByTagName("input")[0].value;
+        command.innerText = "return "+inputText;
+    });
+}
 function disableDragability(){
     [].forEach.call(document.getElementsByClassName("draggable"), ele=>ele.setAttribute("draggable", false));
 }
@@ -532,6 +510,7 @@ const onPlayClick = async (event)=>{
     fixatePrintCommandsIput.call(currFunctionContainer);
     fixateFreeTextCommands.call(currFunctionContainer);
     fixateStopConditionFreeTextCommands.call(currFunctionContainer);
+    fixateReturnFreeTextCommands.call(currFunctionContainer);
     backupFunctionPrototype.call(currFunctionContainer);
     await sleep(2000);
     await executeFunctionContainer.call(currFunctionContainer);
@@ -594,14 +573,6 @@ function insertFirstFunctionContainerToDOM()
 
 insertFirstFunctionContainerToDOM();
 
-stopCondition.addEventListener("dragstart", onDragStart);
-stopCondition.addEventListener("mouseenter", onMouseEnter);
-stopCondition.addEventListener("mouseleave", onMouseLeave);
-
-stopCondition1.addEventListener("dragstart", onDragStart);
-stopCondition1.addEventListener("mouseenter", onMouseEnter);
-stopCondition1.addEventListener("mouseleave", onMouseLeave);
-
 printCommandFreeText.addEventListener("dragstart",onDragStart);
 printCommandFreeText.addEventListener("mouseenter", onMouseEnter);
 printCommandFreeText.addEventListener("mouseleave", onMouseLeave);
@@ -614,17 +585,9 @@ ifCommandFreeText.addEventListener("dragstart",onDragStart);
 ifCommandFreeText.addEventListener("mouseenter", onMouseEnter);
 ifCommandFreeText.addEventListener("mouseleave", onMouseLeave);
 
-funcCommand.addEventListener("dragstart",onDragStart);
-funcCommand.addEventListener("mouseenter", onMouseEnter);
-funcCommand.addEventListener("mouseleave", onMouseLeave);
-
-returnFuncCommand.addEventListener("dragstart",onDragStart);
-returnFuncCommand.addEventListener("mouseenter", onMouseEnter);
-returnFuncCommand.addEventListener("mouseleave", onMouseLeave);
-
-returnXY.addEventListener("dragstart",onDragStart);
-returnXY.addEventListener("mouseenter", onMouseEnter);
-returnXY.addEventListener("mouseleave", onMouseLeave);
+returnStatementFreeText.addEventListener("dragstart",onDragStart);
+returnStatementFreeText.addEventListener("mouseenter", onMouseEnter);
+returnStatementFreeText.addEventListener("mouseleave", onMouseLeave);
 
 playButton.addEventListener("click", onPlayClick);
 resumeButton.addEventListener("click", onResumeClick);
