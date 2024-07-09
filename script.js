@@ -158,7 +158,7 @@ function splitConditionByDelimiter(condition,delim){
 
 }
 function splitCondition(condition){
-    const delimiters = ["==","!=",">",">=","<","<="];
+    const delimiters = ["==","!=",">=","<=",">","<"];
     let parts = [];
     let i = -1;
     do{

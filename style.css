@@ -84,7 +84,7 @@ aside {
 }
 
 .draggables{
-  width: fit-content;
+  width: 200px;
   float: left;
   background-color: rgb(36, 70, 36);
   display: flex;
@@ -97,20 +97,31 @@ aside {
 }
 .drag-image{
   padding:0;
+  width: 100%;
+  display: flex;
 }
 
 .drag-image input{
-  width: auto;
-  max-width: 70px;
+  width: 100%;
+  /* max-width: 90px; */
 }
+
 .if-command-free-text{
   height: fit-content;
+  button{
+    display: flex;
+    flex-direction: column;
+    .return-statement{
+      margin-left: 30px;
+    }
+    input{
+      width: 30px;
+    }
+  }
 }
+
 select{
   appearance: none;
-}
-.if-command-free-text input{
-  width: 30px;
 }
 .dropit{
   width: 100%;
