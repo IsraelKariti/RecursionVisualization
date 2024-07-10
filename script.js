@@ -340,9 +340,22 @@ function addObserverForFunctionContainerRemoval(){
     mutationObserver.observe(this.parentElement,{childList:true});
 }
 
+function dimAllFunctionContainers(){
+    const functionContainers = viewArea.getElementsByClassName("function-container");
+    [].forEach.call(functionContainers,(functionContainer)=>{
+        functionContainer.classList.add("dimmed");
+    });
+}
+
+function undimThisContainer(){
+    this.classList.remove("dimmed");
+}
+
 async function executeFunctionContainer(){
 
     addObserverForFunctionContainerRemoval.call(this);
+    dimAllFunctionContainers();
+    undimThisContainer.call(this);
 
     this.functionRunning = true;
     const x = this.x;

@@ -196,25 +196,41 @@ select{
   width: 24rem;
   align-items: center;
   border-radius: 10px;
+
+  .function-signature{
+    font-weight: 700;
+    font-size:2rem;
+    border-radius: 10px;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    color: blue;
+    border: 4px solid blue;
+    background-color: white;
+    z-index: 1;
+    position: relative;
+  }
 }
 
 .function-container-highlight{
   animation: frame-highlight-animation 1s;
 }
 
-.function-signature{
-  font-weight: 700;
-  font-size:2rem;
-  border-radius: 10px;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  color: blue;
-  border: 4px solid blue;
-  background-color: white;
-  z-index: 1;
-  position: relative;
+.function-container.dimmed{
+  .function-signature{
+    opacity: 0.6;
+  }
+  .commands-container{
+    opacity: 0.6;
+    .command{
+      opacity: 0.6;
+      button{
+        opacity: 0.6;
+      }
+    }
+  }
 }
+
 .bubble{
   width: 0px;
   height: 60px;
