@@ -186,7 +186,7 @@ select{
 #view-area{
   display: flex;
   flex: 1 1 auto;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   flex-direction: row;
 }
 .function-container{
@@ -310,9 +310,9 @@ footer{
   width: 100%;
   height: 100px;
   overflow-y: auto;
-  background-color: grey;
+  background-color: #ccc;
   padding: 1rem 3rem;
-  border: 4px solid black;
+  border: 4px solid blue;
   border-radius: 10px;
 }
 .command.function-disabled{
