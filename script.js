@@ -234,7 +234,11 @@ async function executeFunc(x){
         setFunctionHighlight.call(newFunctionContainer);
         viewArea.appendChild(newFunctionContainer);
         await sleep(2000);
+        dimAllFunctionContainers();
+        undimThisContainer.call(newFunctionContainer);
         const returnedValue = await executeFunctionContainer.call(newFunctionContainer);
+        dimAllFunctionContainers();
+        undimThisContainer.call(this);
         resolve(returnedValue);
     });
 };
