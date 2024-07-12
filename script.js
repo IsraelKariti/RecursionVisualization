@@ -268,7 +268,6 @@ const executionTable = {
     "print-command-free-text":executePrintFreeText,
     "command-free-text":executeFreeText,
     "if-command-free-text":executeStopConditionFreeText,
-    "func-command": executeFunc,
     "return-statement-free-text": executeReturnStatementFreeText,
 };
 
